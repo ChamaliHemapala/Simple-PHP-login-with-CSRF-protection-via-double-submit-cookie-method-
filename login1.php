@@ -6,15 +6,16 @@
 	$sessionID=session_id();
 	
 	 //generate CSRF token
-	if(empty($_SESSION['key']))
+	if(empty($_SESSION['key']))  // creating the session key for csrf token
 	{
 		$_SESSION['key']=md5(uniqid(mt_rand(),true));    
 	}
 	
-	$csrf = hash_hmac('sha256',$sessionID,$_SESSION['key']);
-	$_SESSION['csrf']= $csrf;
-	setcookie("session_id",$sessionID,time()+3600,"/","localhost",false,true);
-	setcookie("csrf",$csrf,time()+3600,"/","localhost",false,true); //csrf token cookie
+	$csrf = hash_hmac('sha256',$sessionID,$_SESSION['key']);  //creating csrf token
+	$_SESSION['csrf']= $csrf;  // and storin it in session
+	
+	setcookie("session_id",$sessionID,time()+3600,"/","localhost",false,true);  //setting a cookie for session id
+	setcookie("csrf",$csrf,time()+3600,"/","localhost",false,true); //setting a cookie for csrf token 
 
 	
 ?>
@@ -49,6 +50,8 @@
 
 <script> document.getElementById("cs").value = '<?php echo $csrf; ?>' </script> <!-- Assign CSRF token to hidden variable --!>
 
+<!-- This is a additional part apart from csrf protection. This is the cookie which created for the email when you tick the remember me check box, so the next time you log in and if the cookie is there stored in the browser yoye email will be there in the email field!-->
+
 <?php
 	if(isset($_COOKIE['email'])  )
 	{	
@@ -56,6 +59,11 @@
 		
 		echo "<script>
 			document.getElementById('email').value= '$email'
+			
+
+		</script>";
+		echo "<script>
+			document.getElementById('password').value= '$password'
 			
 
 		</script>";
